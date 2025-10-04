@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Simple Online Quiz App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      margin: 0; padding: 0;
+    }
+    .container {
+      background: #fff;
+      max-width: 500px;
+      margin: 40px auto;
+      padding: 30px 40px 20px 40px;
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+    }
+    h2 {
+      margin-top: 0;
+    }
+    .question {
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .options label {
+      display: block;
+      padding: 6px 0;
+      cursor: pointer;
+    }
+    .options input[type="radio"] {
+      margin-right: 7px;
+    }
+    .stat {
+      margin: 16px 0 8px 0;
+      color: #444;
+    }
+    .btn {
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 24px;
+      font-size: 16px;
+      cursor: pointer;
+      margin: 18px 0 0 0;
+      transition: background 0.18s;
+    }
+    .btn:hover {
+      background: #0056b3;
+    }
+    .result {
+      font-size: 22px;
+      color: #007b55;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+    .summary {
+      color: #222;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="quizApp">
+    <h2>Online Quiz App</h2>
+    <div id="quiz"></div>
+    <button class="btn" id="nextBtn" onclick="nextQuestion()">Next</button>
+    <div id="result" class="result"></div>
+    <div id="summary" class="summary"></div>
+  </div>
+
+  <script>
+    // Objective type questions
+    const questions = [
+      {
+        question: "What is the capital of india?",
+        options: ["Berlin", "London", "delhi", "Rome"],
+        answer: 3// Paris
+      },
+      {
+        question: "Which planet is known as the Red Planet?",
+        options: ["Earth", "Mars", "Jupiter", "Venus"],
+        answer: 1 // Mars
+      },
+      {
+        question: "Who wrote 'Romeo and Juliet'?",
+        options: ["Shakespeare", "Charles Dickens", "Leo Tolstoy", "Mark Twain"],
+        answer: 0 // Shakespeare
+      },
+      {
+        question: "Which is the largest ocean on Earth?",
+        options: ["Atlantic", "Indian", "Pacific", "Arctic"],
+        answer: 2 // Pacific
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let selected = null;
+
+    function showQuestion() {
+      const q = questions[currentQuestion];
+      document.getElementById('quiz').innerHTML = `
+        <div class="stat">
+          Question ${currentQuestion + 1} of ${questions.length}
+        </div>
+        <div class="question">${q.question}</div>
+        <div class="options">
+          ${q.options.map((opt, i) => `
+            <label>
+              <input type="radio" name="option" value="${i}" onclick="selectOption(${i})">
+              ${opt}
+            </label>
+          `).join('')}
+        </div>
+      `;
+      document.getElementById('result').textContent = '';
+      document.getElementById('summary').textContent = '';
+      document.getElementById('nextBtn').disabled = true;
+      if (currentQuestion === questions.length - 1) {
+        document.getElementById('nextBtn').textContent = "Finish";
+      } else {
+        document.getElementById('nextBtn').textContent = "Next";
+      }
+    }
+
+    function selectOption(i) {
+      selected = i;
+      document.getElementById('nextBtn').disabled = false;
+    }
+
+    function nextQuestion() {
+      if (selected !== null && selected == questions[currentQuestion].answer) {
+        score++;
+      }
+      currentQuestion++;
+      selected = null;
+      if (currentQuestion < questions.length) {
+        showQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult() {
+      document.getElementById('quiz').innerHTML = '';
+      document.getElementById('nextBtn').style.display = 'none';
+      document.getElementById('result').textContent = `You scored ${score} out of ${questions.length}!`;
+      let percent = ((score / questions.length) * 100).toFixed(1);
+      document.getElementById('summary').textContent = `Percentage: ${percent}%`;
+    }
+
+    // Initialize the quiz
+    showQuestion();
+  </script>
+</body>
+</html>
